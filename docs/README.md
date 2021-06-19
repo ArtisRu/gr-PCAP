@@ -8,7 +8,7 @@ Modules for working with .pcap files in GNU Radio.
 ## Install
 ```
  git clone https://github.com/ArtisRu/gr-PCAP
- cd gr-chat_modem
+ cd gr-PCAP
  mkdir build
  cd build
  cmake ../

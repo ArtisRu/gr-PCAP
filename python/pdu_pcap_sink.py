@@ -22,7 +22,7 @@
 
 import numpy as np
 import pmt
-import scapy
+from scapy.all import *
 from gnuradio import gr
 
 class pdu_pcap_sink(gr.sync_block):
@@ -34,7 +34,19 @@ class pdu_pcap_sink(gr.sync_block):
             name="pdu_pcap_sink",
             in_sig=[],
             out_sig=[])
+        self.filename = filename
+        self.linktype = linktype
+        self.pcap_file = scapy.utils.PcapWriter(self.filename, linktype = linktype, append = True, sync = True)
+        self.message_port_register_in(pmt.intern("msg_in"))
+        self.set_msg_handler(pmt.intern("msg_in"), self.handle_msg)
 
+    def handle_msg(self, msg):
+        meta = pmt.to_python(msg)
+        payload = np.array([], dtype = np.uint8)
+        for p in range(len(meta[1][:])):
+            payload = np.append(payload, meta[1][p])
+        x = payload.tobytes()
+        self.pcap_file.write(x)
 
     def work(self, input_items, output_items):
         pass
